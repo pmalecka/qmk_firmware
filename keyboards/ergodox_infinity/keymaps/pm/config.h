@@ -1,5 +1,5 @@
-#ifndef CONFIG_SJB_H
-#define CONFIG_SJB_H
+#ifndef CONFIG_PM_H
+#define CONFIG_PM_H
 
 #include "../../config.h"
 
