@@ -17,6 +17,7 @@
 #include "lcd_backlight_keyframes.h"
 #include "visualizer_keyframes.h"
 #include "lcd_keyframes.h"
+#include "default_animations.h"
 
 static const char* welcome_text = "Errgodox Infinity";
 static const char* revision_text = "QMK: " QMK_VERSION;
@@ -24,16 +25,17 @@ static const char* keymap_text = "Keymap: " QMK_KEYMAP;
 static const char* suspend_text = "ZZZZzzzz....";
 
 static const uint8_t default_brightness_level = 0x50;
-static const uint32_t boot_lcd_color = LCD_COLOR(0x00, 0x00, 0x25); // initial color setting during boot sequence
+static const uint32_t boot_lcd_color = LCD_COLOR(0, 0, 0); // initial color setting during boot sequence
 static const uint32_t startup_animation_lcd_color = LCD_COLOR(0x00, 0x90, 0x50);
 
 bool display_welcome(keyframe_animation_t* animation, visualizer_state_t* state) {
+    (void)state;
     (void)animation;
 
     gdispClear(White);
     gdispDrawString(0, 3, welcome_text, state->font_dejavusansbold12, Black);
     gdispDrawString(0, 15, revision_text, state->font_dejavusansbold12, Black);
-    gdispFlush(); 
+    // gdispFlush();
 
     return false;
 }
@@ -44,7 +46,7 @@ bool display_layer(keyframe_animation_t* animation, visualizer_state_t* state) {
     gdispClear(White);
     gdispDrawString(0, 3, state->layer_text, state->font_dejavusansbold12, Black);
     gdispDrawString(0, 15,keymap_text, state->font_dejavusansbold12, Black);
-    gdispFlush(); 
+    // gdispFlush();
 
     return false;
 }
@@ -54,16 +56,16 @@ bool display_suspend(keyframe_animation_t* animation, visualizer_state_t* state)
 
     gdispClear(White);
     gdispDrawString(0, 3, suspend_text, state->font_dejavusansbold12, Black);
-    gdispFlush(); 
+    // gdispFlush();
 
     return false;
 }
 
 static keyframe_animation_t startup_animation = {
-    .num_frames = 4,
+    .num_frames = 3,
     .loop = false,
-    .frame_lengths = {0, MS2ST(1000), MS2ST(5000), 0},
-    .frame_functions = {lcd_keyframe_enable, display_welcome, lcd_backlight_keyframe_animate_color, keyframe_no_operation},
+    .frame_lengths = {0, 0, gfxMillisecondsToTicks(5000)},
+    .frame_functions = {lcd_keyframe_enable, display_welcome, lcd_backlight_keyframe_animate_color},
 };
 
 // The color animation animates the LCD color when you change layers
@@ -73,32 +75,37 @@ static keyframe_animation_t color_animation = {
     // Note that there's a 200 ms no-operation frame,
     // this prevents the color from changing when activating the layer
     // momentarily
-    .frame_lengths = {MS2ST(200), MS2ST(500)},
+    .frame_lengths = {gfxMillisecondsToTicks(200), gfxMillisecondsToTicks(500)},
     .frame_functions = {keyframe_no_operation, lcd_backlight_keyframe_animate_color},
 };
 
 // The LCD animation alternates between the layer name display and a
 // bitmap that displays all active layers
+// static keyframe_animation_t lcd_animation = {
+//     .num_frames = 1,
+//     .loop = true,
+//     .frame_lengths = {gfxMillisecondsToTicks(700)},
+//     .frame_functions = {display_layer},
+// };
 static keyframe_animation_t lcd_animation = {
     .num_frames = 1,
-    .loop = true,
-    .frame_lengths = {MS2ST(3000)},
+    .loop = false,
+    .frame_lengths = {gfxMillisecondsToTicks(0)},
     .frame_functions = {display_layer},
 };
-
 
 static keyframe_animation_t suspend_animation = {
     .num_frames = 3,
     .loop = false,
-    .frame_lengths = {MS2ST(2000), 0, 0},
+    .frame_lengths = {gfxMillisecondsToTicks(2000), 0, 0},
     .frame_functions = {display_suspend, lcd_keyframe_disable, lcd_backlight_keyframe_disable},
 };
 
 static keyframe_animation_t resume_animation = {
-    .num_frames = 6,
+    .num_frames = 4,
     .loop = false,
-    .frame_lengths = {0, 0, 0, MS2ST(1000), MS2ST(5000), 0},
-    .frame_functions = {lcd_keyframe_enable, lcd_backlight_keyframe_enable, display_welcome, lcd_backlight_keyframe_animate_color, keyframe_no_operation, lcd_keyframe_enable},
+    .frame_lengths = {0, 0, 0, gfxMillisecondsToTicks(5000)},
+    .frame_functions = {lcd_keyframe_enable, lcd_backlight_keyframe_enable, display_welcome, lcd_backlight_keyframe_animate_color},
 };
 
 void initialize_user_visualizer(visualizer_state_t* state) {
@@ -121,7 +128,7 @@ void update_user_visualizer_state(visualizer_state_t* state, visualizer_keyboard
     static char blank_status[16] = "L:    M:       ";
     int hue = 0x20;
     int sat = 0x90;
-    int intensity = 0x50;
+    int intensity = 0x7F;
     int lcd_brightness = default_brightness_level;
 
     strcpy(status, blank_status);
@@ -135,21 +142,21 @@ void update_user_visualizer_state(visualizer_state_t* state, visualizer_keyboard
 
     if (IS_LAYER_ACTIVE(state->status.layer, 2)) {
         status[3] = '2';
-        intensity += 0x20;
+        intensity += 0x80;
         hue = 0x90;
         lcd_brightness += 0xAF;
     }
 
     if (IS_LAYER_ACTIVE(state->status.layer, 3)) {
         status[4] = '3';
-        intensity += 0x20;
+        intensity += 0x80;
         hue = 0xC0;
         lcd_brightness += 0xAF;
     }
 
     if (IS_MOD_ACTIVE(state->status.mods, KC_LGUI)) {
         status[8] = 'G';
-        intensity -= 0x20;
+        intensity -= 0x80;
         lcd_brightness += 0x56;
     }
 

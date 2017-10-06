@@ -5,11 +5,13 @@ if [ ! -z $1 ]; then
 	flags="MASTER=right"
 fi
 
+echo "Building with flags:" $flags
+
 make -C ../../../../ ergodox_infinity-pm $flags
 if [ $? != 0 ]; then
     exit 1
 fi
-echo "Flashing left hand, Press enter key to continue"
+echo "Flashing, Press enter key to continue"
 read x
 sudo ../../../../util/activate_wsl.sh && make -C ../../../../ ergodox_infinity-pm-dfu-util $flags
 

@@ -139,11 +139,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,---------------------------------------------------.           ,--------------------------------------------------.
  * |         |  F1  |  F2  |  F3  |  F4  |  F5  | F6   |           | F7   |  F8  |  F9  |  F10 |  F11 |  F12 |        |
  * |---------+------+------+------+------+------+------|           |------+------+------+------+------+------+--------|
- * | MsWhUp  | Lclk | MsUp | Rclk | Vol+ | Vol- | MUTE |           |      |  INS |      | PGUP |  Up  | PGDN |        |
+ * |         |      | Lclk | MsUp | Rclk | Vol+ | MUTE |           |      |  INS |      | PGUP |  Up  | PGDN |        |
  * |---------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * | MsWhDwn |MsLeft|MsDown|MsRght|      |      |------|           |------| PSCR |      | Left | Down | Rght |        |
+ * |         |MsWhUp|MsLeft|MsDown|MsRght| Vol- |------|           |------| PSCR |      | Left | Down | Rght |        |
  * |---------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
- * |         |      |      |      |      |      |      |           |      | Calc |      |      |      | Edit |        |
+ * |         |MsWhDn|      |      |      |      |      |           |      | Calc |      |      |      | Edit |        |
  * `---------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
  *   |       |      |      |      |      |                                       |      |      |      |      |      |
  *   `-----------------------------------'                                       `----------------------------------'
@@ -159,9 +159,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [MOTION] = KEYMAP(
        // lefm.,t hand
        KC_TRNS,   KC_F1,    KC_F2,       KC_F3,     KC_F4,      KC_F5,      KC_F6,
-       KC_WH_U,   KC_BTN1,  KC_MS_U,     KC_BTN2,   KC_VOLU,    KC_VOLD,    KC_MUTE,
-       KC_WH_D,   KC_MS_L,  KC_MS_D,     KC_MS_R,   KC_NO,      KC_NO,
-       KC_TRNS,   KC_NO,    KC_NO,       KC_NO,     KC_NO,      KC_NO,      KC_TRNS,
+       KC_TRNS,   KC_NO,    KC_BTN1,     KC_MS_U,   KC_BTN2,    KC_VOLU,    KC_MUTE,
+       KC_TRNS,   KC_WH_U,  KC_MS_L,     KC_MS_D,   KC_MS_R,    KC_VOLD,
+       KC_TRNS,   KC_WH_D,  KC_NO,       KC_NO,     KC_NO,      KC_NO,      KC_TRNS,
        KC_TRNS,   KC_TRNS,  KC_TRNS,     KC_TRNS,   KC_TRNS,
                                                                 KC_MPLY,    KC_MNXT,
                                                                             KC_TRNS,
@@ -169,7 +169,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        // right hand
        KC_F7,     KC_F8,     KC_F9,      KC_F10,    KC_F11,     KC_F12,     KC_TRNS,
        KC_NO,     KC_INS,    KC_NO,      KC_PGUP,   KC_UP,      KC_PGDN,    KC_TRNS,
-       KC_NO,     KC_PSCR,   KC_NO,      KC_LEFT,   KC_DOWN,    KC_RGHT,
+                  KC_PSCR,   KC_NO,      KC_LEFT,   KC_DOWN,    KC_RGHT,    KC_TRNS,
        KC_NO,     KC_CALC,   KC_NO,      KC_NO,     KC_NO,      M(EDITOR),  KC_TRNS,
                              KC_TRNS,    KC_TRNS,   KC_TRNS,    KC_TRNS,    KC_TRNS,
        KC_TRNS,   KC_TRNS,
@@ -272,15 +272,20 @@ static void td_gui_on_finished(qk_tap_dance_state_t *state, void *user_data) {
     register_mods(MOD_BIT(kc));
   } else if (state->count == 1) {
     register_mods(MOD_BIT(kc));
-  } else if (state->count == ONESHOT_TAP_TOGGLE) {
-    register_mods(MOD_BIT(kc));
+  // } else if (state->count == ONESHOT_TAP_TOGGLE) {
+  //   register_mods(MOD_BIT(kc));
+  } else if (state->count == 2) {
+    TAP_KEY16(KC_ENT);
   } else if (state->count == 3) {
     TAP_KEY16(LGUI(KC_L));
   }
 }
 
 static void td_gui_on_reset(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count == ONESHOT_TAP_TOGGLE) {
+  // if (state->count == ONESHOT_TAP_TOGGLE) {
+  //   return;
+  // }
+  if (state->count == 2) {
     return;
   }
   uint8_t kc = GET_KEYCODE_FROM_VOIDPTR(user_data);
