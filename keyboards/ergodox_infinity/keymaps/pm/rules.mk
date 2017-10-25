@@ -18,9 +18,7 @@ ifeq (${FORCE_NKRO},yes)
 OPT_DEFS += -DFORCE_NKRO
 endif
 
-# ifeq (${SUBPROJECT},infinity)
 VISUALIZER_ENABLE = yes
-# endif
 
 # KEYMAP_VERSION = $(shell \
 #  if [ -d "${KEYMAP_PATH}/.git" ]; then \
