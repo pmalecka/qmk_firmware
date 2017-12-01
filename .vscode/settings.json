@@ -13,6 +13,18 @@
         "*.cpp": "cpp",
         "*.hpp": "cpp",
         "xiosbase": "c",
-        "xlocale": "c"
-    }
+        "xlocale": "c",
+        "iosfwd": "c",
+        "tuple": "c",
+        "utility": "c",
+        "chrono": "c",
+        "xhash": "c",
+        "xtree": "c",
+        "system_error": "c"
+    },
+    // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
+    "editor.tabSize": 2,
+    // The path of the shell that the terminal uses on Windows. When using shells shipped with Windows (cmd, PowerShell or Bash on Ubuntu).
+    "terminal.integrated.shell.windows": "C:\\Windows\\sysnative\\bash.exe",
+    "terminal.integrated.shellArgs.windows": []
 }
