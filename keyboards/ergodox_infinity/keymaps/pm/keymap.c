@@ -1,92 +1,66 @@
-#include QMK_KEYBOARD_H
-
-#include "debug.h"
-#include "led.h"
 #include "action_layer.h"
 #include "action_util.h"
+#include "debug.h"
 #include "eeconfig.h"
+#include "ergodox_infinity.h"
+#include "led.h"
 #include "version.h"
 
-#define DEFAULT_EDITOR "notepad"
+#ifdef TAP_DANCE_ENABLE
+#include "tap_dance_extra.h"
+#endif
 
-// unsupported hid comsumer id
-#define AL_EDITOR 0x185
-
+#define LCA(kc) (kc | QK_LCTL | QK_LALT)
 #define LSS(kc) (kc | QK_LSFT | QK_LGUI)
 
+#define F_RALT KC_RALT
+#define F_RCTL KC_RCTL
 #define F_TERM LCTL(KC_GRV)
+#define F_LOCK LGUI(KC_L)
+#define F_LEFTMON LSS(KC_LEFT)
+#define F_RIGHTMON LSS(KC_RIGHT)
+#define F_KPAUTOTYPE LCA(KC_F10)
+
+#define OSL_NAV OSL(NAV)
+#define OSL_NUM OSL(NUMPAD)
+#define TG_NUM TG(NUMPAD)
+#define OSM_LSFT OSM(MOD_LSFT)
+#define OSM_RSFT OSM(MOD_RSFT)
+#define OSM_LCTL OSM(MOD_LCTL)
+#define OSM_LALT OSM(MOD_LALT)
+#define OSM_RALT OSM(MOD_RALT)
 
 enum {
-  TD_TERM_ONLY_ONCE = 0,
+  TD_TASKSWITCH = 0,
   TD_LEFT_BRACE_OR_PRN,
   TD_RIGHT_BRACE_OR_PRN,
-  TD_LEFT_OR_MOVE_WIN_TO_OTHER_MONITOR,
-  TD_RIGHT_OR_MOVE_WIN_TO_OTHER_MONITOR,
   TD_SEMICOLON_OR_COLON,
-  TD_TASKSWITCH,
   TD_WINKEY_OR_LOCK_WORKSTATION
 };
 
 #ifdef TAP_DANCE_ENABLE
-
-#define TD_TERM TD(TD_TERM_ONLY_ONCE)
+#define TD_TSKSWCH TD(TD_TASKSWITCH)
 #define TD_LBRC TD(TD_LEFT_BRACE_OR_PRN)
 #define TD_RBRC TD(TD_RIGHT_BRACE_OR_PRN)
-#define TD_LEFT TD(TD_LEFT_OR_MOVE_WIN_TO_OTHER_MONITOR)
-#define TD_RGHT TD(TD_RIGHT_OR_MOVE_WIN_TO_OTHER_MONITOR)
 #define TD_SCLN TD(TD_SEMICOLON_OR_COLON)
-#define TD_TSKSWCH TD(TD_TASKSWITCH)
 #define TD_GUI TD(TD_WINKEY_OR_LOCK_WORKSTATION)
-
 #else
-
-#define TD_TERM F_TERM
+#define TD_TSKSWCH M(VRSNS)
 #define TD_LBRC KC_LBRC
 #define TD_RBRC KC_RBRC
-#define TD_RGHT KC_RGHT
-#define TD_LEFT KC_LEFT
 #define TD_SCLN KC_SCLN
-#define TD_TSKSWCH M(TSKSWCH)
 #define TD_GUI KC_LGUI
-
 #endif
-
-
-#ifdef QMK_MOD_SHORTCUT_ENABLED
-
-#define F_MOTION OSL(MOTION)
-#define F_NUMPAD OSL(NUMPAD)
-#define F_LSFT OSM(MOD_LSFT)
-#define F_RSFT OSM(MOD_RSFT)
-#define F_LCTL OSM(MOD_LCTL)
-#define F_LALT OSM(MOD_LALT)
-#else
-
-#define F_MOTION KC_FN0
-#define F_NUMPAD KC_FN1
-#define F_LSFT KC_FN3
-#define F_RSFT KC_FN4
-#define F_LCTL KC_FN5
-#define F_LALT KC_FN6
-#endif
-
-#define TAP_KEY(code) \
-  register_code(code); \
-  unregister_code(code)
-
-#define TAP_KEY16(code) \
-  register_code16(code); \
-  unregister_code16(code)
 
 enum keymaps_layers {
   BASE = 0, // default layer
-  MOTION,   // Mouse and keyboard motion keys
-  NUMPAD    // numpad                                                      
+  NAV,   // Mouse and keyboard motion keys
+  NUMPAD    // numpad
 };
 
 enum custom_keycodes {
   PLACE_HOLDER = 0, // can always be here
-  TSKSWCH,
+  VRSN,
   EDITOR
 };
 
@@ -116,11 +90,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // Otherwise, it needs KC_*
 [BASE] = KEYMAP(  // layer 0 : default
         // left hand
-        GRAVE_ESC,KC_1,    KC_2,    KC_3,  KC_4,       KC_5,     TD_TERM,
+        GRAVE_ESC,KC_1,    KC_2,    KC_3,  KC_4,       KC_5,     F_TERM,
         KC_TAB,   KC_Q,    KC_W,    KC_E,  KC_R,       KC_T,     KC_BSLS,
-        KC_LCTL,  KC_A,    KC_S,    KC_D,  KC_F,       KC_G,
-        F_LSFT,   KC_Z,    KC_X,    KC_C,  KC_V,       KC_B,     TD_LBRC,
-        F_NUMPAD, TD_LEFT, TD_RGHT, F_LALT, F_MOTION,
+        OSM_LCTL, KC_A,    KC_S,    KC_D,  KC_F,       KC_G,
+        OSM_LSFT,   KC_Z,    KC_X,    KC_C,  KC_V,       KC_B,     TD_LBRC,
+        OSL_NUM, F_LEFTMON, F_RIGHTMON, OSM_RALT, OSL_NAV,
                                                        KC_HOME,  KC_END,
                                                                  KC_DEL,
                                            KC_SPC,     KC_BSPC,  TD_GUI,
@@ -128,8 +102,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         TD_TSKSWCH,KC_6,    KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,
         KC_GRV,    KC_Y,    KC_U,     KC_I,     KC_O,     KC_P,     KC_EQL,
                    KC_H,    KC_J,     KC_K,     KC_L,     TD_SCLN,  KC_QUOT,
-        TD_RBRC,   KC_N,    KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  F_RSFT,
-                            F_MOTION, KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  
+        TD_RBRC,   KC_N,    KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  OSM_RSFT,
+                            OSL_NAV, KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,
         KC_RALT,   KC_RCTL,
         KC_PGUP,
         KC_PGDN,   KC_DEL, KC_ENT
@@ -155,8 +129,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                                 |      |      |      |       |      |      |      |
  *                                 `--------------------'       `--------------------'
  */
-// Motion
-[MOTION] = KEYMAP(
+// Navigation
+[NAV] = KEYMAP(
        // lef hand
        KC_TRNS,   KC_F1,    KC_F2,       KC_F3,     KC_F4,      KC_F5,      KC_NO,
        KC_TRNS,   KC_NO,    KC_BTN1,     KC_MS_U,   KC_BTN2,    KC_VOLU,    KC_MUTE,
@@ -187,7 +161,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |---------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
  * |         |   %  |   ^  |   [   |  ]  |   ~  |      |           |      |  &   |  P1  |  P2  |  P3  | PEnt |        |
  * `---------+------+------+------+------+------+------'           `------+------+------+------+------+------+--------'
- *    |      |      |      |      |      |                                       |      |  P0  |  P.  |      |      |
+ *    |      |AUTOTYP|      |      |      |                                       |      |  P0  |  P.  |      |      |
  *    `----------------------------------'                                       `----------------------------------'
  *                                        ,-------------.       ,-------------.
  *                                        |      |      |       |      |      |
@@ -203,7 +177,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_TRNS, KC_EXLM, KC_AT,   KC_LCBR, KC_RCBR, KC_PIPE, KC_NO,
        KC_TRNS, KC_HASH, KC_DLR,  KC_LPRN, KC_RPRN, KC_GRV,
        KC_TRNS, KC_PERC, KC_CIRC, KC_LBRC, KC_RBRC, KC_TILD, KC_NO,
-                KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+                KC_TRNS, F_KPAUTOTYPE, KC_TRNS, KC_TRNS, KC_TRNS,
                                                     KC_TRNS, KC_TRNS,
                                                              KC_TRNS,
                                            KC_TRNS, KC_TRNS, KC_TRNS,
@@ -219,41 +193,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 )
 };
 
-const uint16_t PROGMEM fn_actions[] = {
-  [0] = ACTION_LAYER_ONESHOT(MOTION),
-  [1] = ACTION_LAYER_ONESHOT(NUMPAD),
-  [3] = ACTION_MODS_ONESHOT(MOD_LSFT),
-  [4] = ACTION_MODS_ONESHOT(MOD_RSFT),
-  [5] = ACTION_MODS_ONESHOT(MOD_LCTL),
-  [6] = ACTION_MODS_ONESHOT(MOD_LALT)
-};
-
-static uint16_t tskswch_timer;
-static bool tskswch_active = false;
-
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
   // MACRODOWN only works in this function
   switch(id) {
-    case TSKSWCH:
+    case VRSN:
       if (record->event.pressed) {
-          tskswch_timer = timer_read();
-          tskswch_active = true;
-      } else {
-          if (timer_elapsed(tskswch_timer) > TAPPING_TERM) {
-              unregister_code(KC_LALT);
-          } else {
-              tskswch_active = false;
-              // switch to last application
-              TAP_KEY16(LALT(KC_TAB));
-          }
-      }
-      break;
-    case EDITOR:
-      if (record->event.pressed) {
-        TAP_KEY(KC_LGUI);
-        wait_ms(250);
-        SEND_STRING(DEFAULT_EDITOR "\n");
+        SEND_STRING(QMK_KEYBOARD "/" QMK_KEYMAP " @ " QMK_VERSION);
       }
       break;
   }
@@ -262,87 +208,17 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 };
 
 #ifdef TAP_DANCE_ENABLE
-
-#define GET_KEYCODE_FROM_VOIDPTR(p) ((uint8_t)*(uint8_t *)&p)
-
-static void td_gui_on_finished(qk_tap_dance_state_t *state, void *user_data) {
-  uint8_t kc = GET_KEYCODE_FROM_VOIDPTR(user_data);
-
-  if (state->pressed) {
-    register_mods(MOD_BIT(kc));
-  } else if (state->count == 1) {
-    register_mods(MOD_BIT(kc));
-  // } else if (state->count == ONESHOT_TAP_TOGGLE) {
-  //   register_mods(MOD_BIT(kc));
-  } else if (state->count == 2) {
-    TAP_KEY16(KC_ENT);
-  } else if (state->count == 3) {
-    TAP_KEY16(LGUI(KC_L));
-  }
-}
-
-static void td_gui_on_reset(qk_tap_dance_state_t *state, void *user_data) {
-  // if (state->count == ONESHOT_TAP_TOGGLE) {
-  //   return;
-  // }
-  if (state->count == 2) {
-    return;
-  }
-  uint8_t kc = GET_KEYCODE_FROM_VOIDPTR(user_data);
-  unregister_mods(MOD_BIT(kc));
-}
-
-static void td_tskswch_on_finished(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->pressed) {
-    register_code(KC_LALT);
-    wait_ms(250);
-    TAP_KEY(KC_TAB);
-    state->count = 3;
-  } else {
-    switch (state->count) {
-      case 1:
-        register_code16(LALT(KC_TAB));
-        break;
-      case 2:
-        register_code(KC_LALT);
-        wait_ms(250);
-        TAP_KEY(KC_TAB);
-        wait_ms(250);
-        TAP_KEY(KC_TAB);
-        break;
-    }
-  }
-}
-
-static void td_tskswch_on_reset(qk_tap_dance_state_t *state, void *user_data) {
-   switch (state->count) {
-      case 1:
-        unregister_code16(LALT(KC_TAB));
-        break;
-      case 2:
-        unregister_code(KC_LALT);
-        break;
-      case 3:
-        unregister_code(KC_LALT);
-        break;
-    }
-}
-
-#define ACTION_TAP_DANCE_SHIFT_WITH_DOUBLE(kc) ACTION_TAP_DANCE_DOUBLE(kc, LSFT(kc))
-
 qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_TERM_ONLY_ONCE] = ACTION_TAP_DANCE_DOUBLE(F_TERM, KC_NO),      // start term
-  [TD_LEFT_BRACE_OR_PRN] = ACTION_TAP_DANCE_DOUBLE(KC_LBRC, KC_LPRN),
-  [TD_RIGHT_BRACE_OR_PRN] = ACTION_TAP_DANCE_DOUBLE(KC_RBRC, KC_RPRN),
-  [TD_LEFT_OR_MOVE_WIN_TO_OTHER_MONITOR] = ACTION_TAP_DANCE_DOUBLE(KC_LEFT, LSS(KC_LEFT)),
-  [TD_RIGHT_OR_MOVE_WIN_TO_OTHER_MONITOR] = ACTION_TAP_DANCE_DOUBLE(KC_RGHT, LSS(KC_RGHT)),
+  [TD_LEFT_BRACE_OR_PRN] = ACTION_TAP_DANCE_DOUBLE_RESTORE_MODS(KC_LBRC, KC_LPRN),
+  [TD_RIGHT_BRACE_OR_PRN] = ACTION_TAP_DANCE_DOUBLE_RESTORE_MODS(KC_RBRC, KC_RPRN),
   [TD_SEMICOLON_OR_COLON] = ACTION_TAP_DANCE_SHIFT_WITH_DOUBLE(KC_SCLN),
-  [TD_TASKSWITCH] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, td_tskswch_on_finished, td_tskswch_on_reset),  // switch application / switch windows (windows)
+  [TD_TASKSWITCH] = ACTION_TAP_DANCE_TSKSWCH(),  // switch application / switch windows (windows)
   [TD_WINKEY_OR_LOCK_WORKSTATION] = {
     .fn = { NULL, td_gui_on_finished, td_gui_on_reset },
     .user_data = ((void *)KC_LGUI),
-  },
+  }
 };
+
 #endif
 
 // Runs just one time when the keyboard initializes.
@@ -350,14 +226,45 @@ void matrix_init_user(void) {
 
 };
 
+#define IS_MOD_ACTIVE(kc) (get_mods() & MOD_BIT(kc) \
+                           || ((get_oneshot_mods() & MOD_BIT(kc)) && !has_oneshot_mods_timed_out()))
+
 // Runs constantly in the background, in a loop.
 void matrix_scan_user(void) {
 
-    // When holding the tskswch button show task switcher
-    if (tskswch_active && timer_elapsed(tskswch_timer) > TAPPING_TERM) {
-        tskswch_active = false;
-        register_code(KC_LALT);
-        wait_ms(250);
-        TAP_KEY(KC_TAB);
-    }
+    // ergodox_board_led_off();
+    // ergodox_right_led_1_off();
+    // ergodox_right_led_2_off();
+    // ergodox_right_led_3_off();
+
+    // if (IS_LAYER_ON(1)) {
+    //     ergodox_right_led_1_set(LED_BRIGHTNESS_LO);
+    //     ergodox_right_led_1_on();
+    // }
+
+    // if (IS_LAYER_ON(2)) {
+    //     ergodox_right_led_2_set(LED_BRIGHTNESS_LO);
+    //     ergodox_right_led_2_on();
+    // }
+
+    // if (IS_LAYER_ON(3)) {
+    //     ergodox_right_led_3_set(LED_BRIGHTNESS_LO);
+    //     ergodox_right_led_3_on();
+    // }
+
+    // if (IS_MOD_ACTIVE(KC_LCTL) || IS_MOD_ACTIVE(KC_RCTL)) {
+    //     ergodox_right_led_1_set(LED_BRIGHTNESS_HI);
+    //     ergodox_right_led_1_on();
+    // }
+
+    // if (IS_MOD_ACTIVE(KC_LSFT) || IS_MOD_ACTIVE(KC_RSFT)) {
+    //     ergodox_right_led_2_set(LED_BRIGHTNESS_HI);
+    //     ergodox_right_led_2_on();
+    // }
+
+    // if (IS_MOD_ACTIVE(KC_LALT) || IS_MOD_ACTIVE(KC_RALT)) {
+    //     ergodox_right_led_3_set(LED_BRIGHTNESS_HI);
+    //     ergodox_right_led_3_on();
+    // }
+
 };

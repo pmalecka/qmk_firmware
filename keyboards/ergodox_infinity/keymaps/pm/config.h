@@ -4,9 +4,9 @@
 #include "../../config.h"
 
 #undef MOUSEKEY_TIME_TO_MAX
-#undef MOUSEKEY_MAX_SPEED
-
 #define MOUSEKEY_TIME_TO_MAX 1
+
+#undef MOUSEKEY_MAX_SPEED
 #define MOUSEKEY_MAX_SPEED 2
 
 #undef MOUSEKEY_DELAY
@@ -26,9 +26,16 @@
 
 #define GRAVE_ESC_CTRL_OVERRIDE
 
-#ifdef DEBUG_ENABLE 
+//experimental, to resolve weird OSM issues
+#define QMK_KEYS_PER_SCAN 8
+#undef IGNORE_MOD_TAP_INTERRUPT
+#define PERMISSIVE_HOLD
+
+#ifdef DEBUG_ENABLE
 #undef NO_PRINT
 #undef NO_DEBUG
 #endif
+
+// #define USING_QK_FUNCTION
 
 #endif
