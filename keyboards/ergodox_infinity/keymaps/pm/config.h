@@ -15,8 +15,8 @@
 #undef MOUSEKEY_WHEEL_DELAY
 #define MOUSEKEY_WHEEL_DELAY 0
 
-#define ONESHOT_TAP_TOGGLE 2
-#define ONESHOT_TIMEOUT 1000
+//#define ONESHOT_TAP_TOGGLE 2
+//#define ONESHOT_TIMEOUT 1000
 
 #undef TAPPING_TERM
 #define TAPPING_TERM 200
@@ -26,10 +26,10 @@
 
 #define GRAVE_ESC_CTRL_OVERRIDE
 
-//experimental, to resolve weird OSM issues
-#define QMK_KEYS_PER_SCAN 8
-#undef IGNORE_MOD_TAP_INTERRUPT
-#define PERMISSIVE_HOLD
+// //experimental, to resolve weird OSM issues
+// #define QMK_KEYS_PER_SCAN 8
+// #undef IGNORE_MOD_TAP_INTERRUPT
+// #define PERMISSIVE_HOLD
 
 #ifdef DEBUG_ENABLE
 #undef NO_PRINT

@@ -119,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |---------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
  * |         |MsWhDn|      |      |      |      |      |           |      | Calc |      |      |      | Edit |        |
  * `---------+------+------+------+------+-------------'           `-------------+------+------+------+------+--------'
- *   |       |      |      |      |      |                                       |      |      |      |      |      |
+ *   |       |      |      |      |      |                                       |      | HOME | PGDN | PGUP | END  |
  *   `-----------------------------------'                                       `----------------------------------'
  *                                        ,-------------.       ,-------------.
  *                                        | MPLY | MNXT |       |      |      |
@@ -145,7 +145,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_NO,     KC_INS,    KC_PGUP,    KC_UP,     KC_PGDN,    KC_NO,      KC_F12,
                   KC_PSCR,   KC_LEFT,    KC_DOWN,   KC_RGHT,    KC_NO,      KC_TRNS,
        KC_NO,     KC_CALC,   KC_NO,      KC_NO,     KC_NO,      M(EDITOR),  KC_TRNS,
-                             KC_TRNS,    KC_TRNS,   KC_TRNS,    KC_TRNS,    KC_TRNS,
+                             KC_TRNS,    KC_HOME,   KC_PGDN,    KC_PGUP,    KC_END,
        KC_TRNS,   KC_TRNS,
        KC_TRNS,
        KC_TRNS,   KC_TRNS,   KC_TRNS
