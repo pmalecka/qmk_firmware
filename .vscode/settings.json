@@ -12,17 +12,7 @@
         "*.c": "c",
         "*.cpp": "cpp",
         "*.hpp": "cpp",
-        "xiosbase": "c",
-        "xlocale": "c",
-        "iosfwd": "c",
-        "tuple": "c",
-        "utility": "c",
-        "chrono": "c",
-        "xhash": "c",
-        "xtree": "c",
-        "system_error": "c",
-        "xutility": "c",
-        "ios": "c"
+        "xstddef": "c"
     },
     // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
     "editor.tabSize": 2,
