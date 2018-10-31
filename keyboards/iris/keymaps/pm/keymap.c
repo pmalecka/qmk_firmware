@@ -57,7 +57,6 @@ enum userspace_custom_keycodes {
   NEW_SAFE_RANGE //use "NEWPLACEHOLDER for keymap specific codes
 };
 
-#define LCA(kc) (kc | QK_LCTL | QK_LALT)
 #define LSS(kc) (kc | QK_LSFT | QK_LGUI)
 
 #define F_TERM LCTL(KC_GRV)
