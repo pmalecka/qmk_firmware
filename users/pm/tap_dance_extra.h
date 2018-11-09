@@ -5,6 +5,14 @@
 
 #define TD_PRESSED_EVENT 0xFF
 
+typedef struct
+{
+  uint16_t kc1;
+  uint16_t kc2;
+  uint16_t kc3;
+  uint16_t kc4;
+} qk_tap_dance_quad_t;
+
 // kc1 is a mods and kc2 is a keycode
 // ACTION_TAP_DANCE_MOD_TAP(MOD_LALT, KC_LBRC)
 #define ACTION_TAP_DANCE_MOD_TAP(kc1, kc2) {                            \
@@ -35,6 +43,10 @@
 #define ACTION_TAP_DANCE_SHIFT_WITH_DOUBLE(kc)          \
   ACTION_TAP_DANCE_DOUBLE_RESTORE_MODS(kc, LSFT(kc))
 
+#define ACTION_TAP_DANCE_MULTITAP(kc1, kc2, kc3, kc4) {                \
+    .fn = { NULL, td_quad_finished, td_quad_reset}, \
+    .user_data = (void *)&((qk_tap_dance_quad_t) { kc1, kc2, kc3, kc4 }),         \
+  }
 
 void td_mod_tap_on_finished(qk_tap_dance_state_t *state, void *user_data);
 void td_mod_tap_on_reset(qk_tap_dance_state_t *state, void *user_data);
@@ -53,5 +65,8 @@ void td_layer_toggle_on_reset(qk_tap_dance_state_t *state, void *user_data);
 
 void td_pair_restore_mods_finished(qk_tap_dance_state_t *state, void *user_data);
 void td_pair_restore_mods_reset(qk_tap_dance_state_t *state, void *user_data);
+
+void td_quad_finished (qk_tap_dance_state_t *state, void *user_data);
+void td_quad_reset (qk_tap_dance_state_t *state, void *user_data);
 
 #endif

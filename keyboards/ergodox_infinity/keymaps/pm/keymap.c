@@ -6,15 +6,9 @@
 #include "led.h"
 #include "version.h"
 
-#ifdef TAP_DANCE_ENABLE
-#include "tap_dance_extra.h"
-#endif
-
 #define LCA(kc) (kc | QK_LCTL | QK_LALT)
 #define LSS(kc) (kc | QK_LSFT | QK_LGUI)
 
-#define F_RALT KC_RALT
-#define F_RCTL KC_RCTL
 #define F_TERM LCTL(KC_GRV)
 #define F_LOCK LGUI(KC_L)
 #define F_LEFTMON LSS(KC_LEFT)
@@ -45,7 +39,7 @@ enum {
 #define TD_SCLN TD(TD_SEMICOLON_OR_COLON)
 #define TD_GUI TD(TD_WINKEY_OR_LOCK_WORKSTATION)
 #else
-#define TD_TSKSWCH M(VRSNS)
+#define TD_TSKSWCH M(VRSN)
 #define TD_LBRC KC_LBRC
 #define TD_RBRC KC_RBRC
 #define TD_SCLN KC_SCLN

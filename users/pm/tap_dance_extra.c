@@ -196,3 +196,71 @@ void td_pair_restore_mods_reset(qk_tap_dance_state_t *state, void *user_data) {
         tp_unregister_code(pair->kc2);
     }
 }
+
+//td quad region
+
+enum {
+  SINGLE_TAP = 1,
+  SINGLE_HOLD = 2,
+  DOUBLE_TAP = 3,
+  DOUBLE_HOLD = 4,
+  DOUBLE_SINGLE_TAP = 5 //send SINGLE_TAP twice - NOT DOUBLE_TAP
+  // Add more enums here if you want for triple, quadruple, etc.
+};
+
+typedef struct {
+  bool is_press_action;
+  int state;
+} td_quad_tap;
+
+int td_quad_cur_dance (qk_tap_dance_state_t *state) {
+  if (state->pressed) {
+    return SINGLE_HOLD;
+  }
+  if (state->count == 1) {
+    //If count = 1, and it has been interrupted - it doesn't matter if it is pressed or not: Send SINGLE_TAP
+    if (state->interrupted || state->pressed == 0) return SINGLE_TAP;
+    else return SINGLE_HOLD;
+  }
+  //If count = 2, and it has been interrupted - assume that user is trying to type the letter associated
+  //with single tap. In example below, that means to send `xx` instead of `Escape`.
+  else if (state->count == 2) {
+    if (state->interrupted) return DOUBLE_SINGLE_TAP;
+    else if (state->pressed) return DOUBLE_HOLD;
+    else return DOUBLE_TAP;
+  }
+  else return 6; //magic number. At some point this method will expand to work for more presses
+}
+
+//instanalize an instance of 'td_quad_tap' for the 'td_quad' tap dance.
+static td_quad_tap td_quad_state = {
+  .is_press_action = true,
+  .state = 0
+};
+
+void td_quad_finished (qk_tap_dance_state_t *state, void *user_data) {
+  qk_tap_dance_quad_t *quadruple = (qk_tap_dance_quad_t *)user_data;
+  td_quad_state.state = td_quad_cur_dance(state);
+  switch (td_quad_state.state) {
+    case SINGLE_TAP: register_code16(quadruple->kc1); break;
+    case SINGLE_HOLD: register_code16(quadruple->kc2); break;
+    case DOUBLE_TAP: register_code16(quadruple->kc3); break;
+    case DOUBLE_HOLD: register_code16(quadruple->kc4); break;
+    case DOUBLE_SINGLE_TAP: register_code16(quadruple->kc1); unregister_code16(quadruple->kc1); register_code16(quadruple->kc1);
+    //Last case is for fast typing. Assuming your key is `f`:
+    //For example, when typing the word `buffer`, and you want to make sure that you send `ff` and not `Esc`.
+    //In order to type `ff` when typing fast, the next character will have to be hit within the `TAPPING_TERM`, which by default is 200ms.
+  }
+}
+
+void td_quad_reset (qk_tap_dance_state_t *state, void *user_data) {
+  qk_tap_dance_quad_t *quadruple = (qk_tap_dance_quad_t *)user_data;
+  switch (td_quad_state.state) {
+    case SINGLE_TAP: unregister_code16(quadruple->kc1); break;
+    case SINGLE_HOLD: unregister_code16(quadruple->kc2); break;
+    case DOUBLE_TAP: unregister_code16(quadruple->kc3); break;
+    case DOUBLE_HOLD: unregister_code16(quadruple->kc4);
+    case DOUBLE_SINGLE_TAP: unregister_code16(quadruple->kc1);
+  }
+  td_quad_state.state = 0;
+}

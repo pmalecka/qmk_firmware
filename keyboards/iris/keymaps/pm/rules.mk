@@ -6,7 +6,3 @@ FORCE_NKRO = yes
 ifeq (${FORCE_NKRO},yes)
 OPT_DEFS += -DFORCE_NKRO
 endif
-
-ifeq (${TAP_DANCE_ENABLE},yes)
-SRC += tap_dance_extra.c
-endif
