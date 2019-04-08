@@ -2,8 +2,8 @@
 #include "quantum.h"
 #include "version.h"
 #include "eeprom.h"
-// #include "action_layer.h"
-// #include "eeconfig.h"
+#include "action_layer.h"
+#include "eeconfig.h"
 
 #ifdef RGB_MATRIX_ENABLE
 #include "rgb_matrix.h"
@@ -98,6 +98,7 @@ enum userspace_custom_keycodes {
 #define F_KPAT LCA(KC_F10) // default global shortcut for keepass autotype
 #define F_LEFTMON LSS(KC_LEFT)
 #define F_RIGHTMON LSS(KC_RIGHT)
+#define F_CAD LCA(KC_DEL) //CTRL + ALT + DELETE
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)

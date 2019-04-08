@@ -1,4 +1,5 @@
 #include "pm.h"
+#include "rgb_stuff.h"
 
 #ifdef TAP_DANCE_ENABLE
 #include "tap_dance_extra.h"
@@ -8,6 +9,21 @@ userspace_config_t userspace_config;
 
 uint16_t copy_paste_timer;
 //  Helper Functions
+
+void bootmagic_lite(void) {
+  matrix_scan();
+  #if defined(DEBOUNCING_DELAY) && DEBOUNCING_DELAY > 0
+    wait_ms(DEBOUNCING_DELAY * 2);
+  #elif defined(DEBOUNCE) && DEBOUNCE > 0
+    wait_ms(DEBOUNCE * 2);
+  #else
+    wait_ms(30);
+  #endif
+  matrix_scan();
+   if (matrix_get_row(BOOTMAGIC_LITE_ROW) & (1 << BOOTMAGIC_LITE_COLUMN)) {
+    bootloader_jump();
+  }
+}
 
 // Add reconfigurable functions here, for keymap customization
 // This allows for a global, userspace functions, and continued
@@ -64,13 +80,14 @@ void matrix_init_user(void) {
 
   userspace_config.raw = eeconfig_read_user();
 
-// #ifdef BOOTLOADER_CATERINA
-//   DDRD &= ~(1<<5);
-//   PORTD &= ~(1<<5);
+#ifdef BOOTLOADER_CATERINA
+  // This will disable the red LEDs on the ProMicros
+  DDRD &= ~(1<<5);
+  PORTD &= ~(1<<5);
 
-//   DDRB &= ~(1<<0);
-//   PORTB &= ~(1<<0);
-// #endif
+  DDRB &= ~(1<<0);
+  PORTB &= ~(1<<0);
+#endif
 
 #if (defined(UNICODE_ENABLE) || defined(UNICODEMAP_ENABLE) || defined(UCIS_ENABLE))
   if (eeprom_read_byte(EECONFIG_UNICODEMODE) != UC_WIN) {

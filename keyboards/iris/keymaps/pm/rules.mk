@@ -1,8 +1,15 @@
-RGBLIGHT_ENABLE = no
+RGBLIGHT_ENABLE  = yes
 BACKLIGHT_ENABLE = no
 TAP_DANCE_ENABLE = yes
-FORCE_NKRO = yes
+NKRO_ENABLE      = yes
+FORCE_NKRO       = yes
 
 ifeq (${FORCE_NKRO},yes)
 OPT_DEFS += -DFORCE_NKRO
 endif
+
+INDICATOR_LIGHTS  = yes
+MACROS_ENABLED    = no
+RGBLIGHT_TWINKLE  = no
+
+BOOTLOADER        = atmel-dfu
