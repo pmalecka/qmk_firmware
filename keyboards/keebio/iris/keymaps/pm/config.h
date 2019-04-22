@@ -1,13 +1,15 @@
-#ifndef CONFIG_PM_H
-#define CONFIG_PM_H
+#pragma once
 
-#include "../../config.h"
-
-//Iris Specific Stuff
 /* Use I2C or Serial, not both */
 
 #define USE_SERIAL
-// #define USE_I2C
+#undef USE_I2C
+
+/* Select hand configuration */
+
+#define MASTER_LEFT
+// #define MASTER_RIGHT
+// #define EE_HANDS
 
 #ifdef RGBLIGHT_ENABLE
 #undef RGBLED_NUM
@@ -23,15 +25,12 @@
 #define RGBLIGHT_LIMIT_VAL 225
 #endif // RGBLIGHT_ENABLE
 
-/* Select hand configuration */
-
-#define MASTER_LEFT
-// #define MASTER_RIGHT
-// #define EE_HANDS
-
-#ifdef DEBUG_ENABLE
-#undef NO_PRINT
-#undef NO_DEBUG
+#undef PRODUCT
+#ifdef KEYBOARD_iris_rev2
+#define PRODUCT         PM Awesome Iris Rev.2
 #endif
 
-#endif
+
+
+#define BOOTMAGIC_LITE_ROW 4
+#define BOOTMAGIC_LITE_COLUMN 3

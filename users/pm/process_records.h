@@ -1,5 +1,5 @@
 #pragma once
-#include "pm2.h"
+#include "pm.h"
 
 #if defined(KEYMAP_SAFE_RANGE)
   #define PLACEHOLDER_SAFE_RANGE KEYMAP_SAFE_RANGE
@@ -9,10 +9,6 @@
 
 enum userspace_custom_keycodes {
   VRSN = PLACEHOLDER_SAFE_RANGE,              // Prints QMK Firmware and board info
-  KC_BASE,           // Sets default layer to BASE
-  KC_COLEMAK,        // Sets default layer to COLEMAK
-  KC_DVORAK,         // Sets default layer to DVORAK
-  KC_WORKMAN,        // Sets default layer to WORKMAN
   LOWER,             // Tri Layer Update when LOWER layer is selected
   RAISE,             // Tri Layer Update when RAISE layer is selected
   ADJUST,            // Tri Layer Update when ADJUST layer is selected
@@ -25,11 +21,6 @@ enum userspace_custom_keycodes {
   KC_SECRET_4,       // test4
   KC_SECRET_5,       // test5
   KC_CCCV,           // Hold to copy, tap to paste
-  KC_NUKE,           // NUCLEAR LAUNCH DETECTED!!!
-  UC_FLIP,           // (ಠ痊ಠ)┻━┻
-  UC_TABL,           // ┬─┬ノ( º _ ºノ)
-  UC_SHRG,           // ¯\_(ツ)_/¯
-  UC_DISA,           // ಠ_ಠ
   NEW_SAFE_RANGE     //use "NEWPLACEHOLDER for keymap specific codes
 };
 
@@ -93,9 +84,6 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record);
 #define ALT_APP ALT_T(KC_APP)
 
 #define MG_NKRO MAGIC_TOGGLE_NKRO
-
-#define UC_IRNY UC(0x2E2E)
-#define UC_CLUE UC(0x203D)
 
 /*
 Custom Keycodes For Tap Dance

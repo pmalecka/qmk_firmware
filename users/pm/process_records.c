@@ -1,4 +1,4 @@
-#include "pm2.h"
+#include "pm.h"
 
 uint16_t copy_paste_timer;
 
@@ -26,27 +26,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif //KEYLOGGER_ENABLE
 
   switch (keycode) {
-  case KC_BASE ... KC_WORKMAN:
-    if (record->event.pressed) {
-      set_single_persistent_default_layer(keycode - KC_BASE);
-    }
-    break;
   case LOWER:
     if (record->event.pressed) {
       layer_on(_LOWER);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    //   update_tri_layer(_LOWER, _RAISE, _ADJUST);
     } else {
       layer_off(_LOWER);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    //   update_tri_layer(_LOWER, _RAISE, _ADJUST);
     }
     break;
   case RAISE:
     if (record->event.pressed) {
       layer_on(_RAISE);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    //   update_tri_layer(_LOWER, _RAISE, _ADJUST);
     } else {
       layer_off(_RAISE);
-      update_tri_layer(_LOWER, _RAISE, _ADJUST);
+    //   update_tri_layer(_LOWER, _RAISE, _ADJUST);
     }
     break;
   case ADJUST:
@@ -90,41 +85,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     break;
 
-// These are a serious of gaming macros.
-// Only enables for the viterbi, basically,
-// to save on firmware space, since it's limited.
-#ifdef MACROS_ENABLED
-  case KC_OVERWATCH: // Toggle's if we hit "ENTER" or "BACKSPACE" to input macros
-    if (record->event.pressed) { userspace_config.is_overwatch ^= 1; eeconfig_update_user(userspace_config.raw); }
-#ifdef RGBLIGHT_ENABLE
-    userspace_config.is_overwatch ? rgblight_mode_noeeprom(17) : rgblight_mode_noeeprom(18);
-#endif //RGBLIGHT_ENABLE
-    break;
-  case KC_SALT:
-    return send_game_macro("Salt, salt, salt...", record, false);
-  case KC_MORESALT:
-    return  send_game_macro("Please sir, can I have some more salt?!", record, false);
-  case KC_SALTHARD:
-    return send_game_macro("Your salt only makes me harder, and even more aggressive!", record, false);
-  case KC_GOODGAME:
-    return send_game_macro("Good game, everyone!", record, false);
-  case KC_GLHF:
-    return send_game_macro("Good luck, have fun!!!", record, false);
-  case KC_SYMM:
-    return send_game_macro("Left click to win!", record, false);
-  case KC_JUSTGAME:
-    return send_game_macro("It may be a game, but if you don't want to actually try, please go play AI, so that people that actually want to take the game seriously and \"get good\" have a place to do so without trolls like you throwing games.", record, false);
-  case KC_TORB:
-    return send_game_macro("That was positively riveting!", record, false);
-  case KC_AIM:
-    send_game_macro("That aim is absolutely amazing. It's almost like you're a machine!", record, true);
-    return send_game_macro("Wait! That aim is TOO good!  You're clearly using an aim hack! CHEATER!", record, false);
-  case KC_C9:
-    return send_game_macro("OMG!!!  C9!!!", record, false);
-  case KC_GGEZ:
-    return send_game_macro("That was a fantastic game, though it was a bit easy. Try harder next time!", record, false);
-#endif // MACROS_ENABLED
-
   case KC_CCCV:                                    // One key copy/paste
     if(record->event.pressed){
       copy_paste_timer = timer_read();
@@ -140,31 +100,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
     }
     break;
-#ifdef UNICODE_ENABLE
-  case UC_FLIP: // (ノಠ痊ಠ)ノ彡┻━┻
-    if (record->event.pressed) {
-      send_unicode_hex_string("0028 30CE 0CA0 75CA 0CA0 0029 30CE 5F61 253B 2501 253B");
-    }
-    break;
-  case UC_TABL: // ┬─┬ノ( º _ ºノ)
-    if (record->event.pressed) {
-      send_unicode_hex_string("252C 2500 252C 30CE 0028 0020 00BA 0020 005F 0020 00BA 30CE 0029");
-    }
-    break;
-  case UC_SHRG: // ¯\_(ツ)_/¯
-    if (record->event.pressed) {
-      send_unicode_hex_string("00AF 005C 005F 0028 30C4 0029 005F 002F 00AF");
-    }
-    break;
-  case UC_DISA: // ಠ_ಠ
-    if (record->event.pressed) {
-      send_unicode_hex_string("0CA0 005F 0CA0");
-    }
-    break;
-#endif
   }
   return process_record_keymap(keycode, record) &&
-#if defined(RGBLIGHT_ENABLE) || defined(RGB_MATRIX_ENABLE)
+#ifdef RGBLIGHT_ENABLE
     process_record_user_rgb(keycode, record) &&
 #endif // RGBLIGHT_ENABLE
     process_record_secrets(keycode, record);

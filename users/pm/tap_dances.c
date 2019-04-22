@@ -1,9 +1,51 @@
+#include "tap_dances.h"
 #include "action.h"
 #include "action_layer.h"
 #include "action_util.h"
 #include "quantum.h"
-#include "tap_dance_extra.h"
 #include "wait.h"
+
+
+//define diablo macro timer variables
+uint16_t diablo_timer[4];
+uint8_t diablo_times[] = { 0, 1, 3, 5, 10, 30 };
+uint8_t diablo_key_time[4];
+
+// has the correct number of seconds elapsed (as defined by diablo_times)
+bool check_dtimer(uint8_t dtimer) { return (timer_elapsed(diablo_timer[dtimer]) < (diablo_key_time[dtimer] * 1000)) ? false : true; };
+
+// Cycle through the times for the macro, starting at 0, for disabled.
+// Max of six values, so don't exceed
+void diablo_tapdance_master(qk_tap_dance_state_t *state, void *user_data, uint8_t diablo_key) {
+  if (state->count >= 7) {
+    diablo_key_time[diablo_key] = diablo_times[0];
+    reset_tap_dance(state);
+  }  else {
+    diablo_key_time[diablo_key] = diablo_times[state->count - 1];
+  }
+}
+
+// Would rather have one function for all of this, but no idea how to do that...
+void diablo_tapdance1(qk_tap_dance_state_t *state, void *user_data) { diablo_tapdance_master(state, user_data, 0); }
+void diablo_tapdance2(qk_tap_dance_state_t *state, void *user_data) { diablo_tapdance_master(state, user_data, 1); }
+void diablo_tapdance3(qk_tap_dance_state_t *state, void *user_data) { diablo_tapdance_master(state, user_data, 2); }
+void diablo_tapdance4(qk_tap_dance_state_t *state, void *user_data) { diablo_tapdance_master(state, user_data, 3); }
+
+//Tap Dance Definitions
+qk_tap_dance_action_t tap_dance_actions[] = {
+  // tap once to disable, and more to enable timed micros
+  [TD_LEFT_BRACE_OR_PRN] = ACTION_TAP_DANCE_DOUBLE_RESTORE_MODS(KC_LBRC, KC_LPRN),
+  [TD_RIGHT_BRACE_OR_PRN] = ACTION_TAP_DANCE_DOUBLE_RESTORE_MODS(KC_RBRC, KC_RPRN),
+  [TD_SEMICOLON_OR_COLON] = ACTION_TAP_DANCE_SHIFT_WITH_DOUBLE(KC_SCLN),
+  [TD_TASKSWITCH] = ACTION_TAP_DANCE_TSKSWCH(),  // switch application / switch windows (windows)
+  [TD_GUI_OR_LOCK_WORKSTATION] = {
+    .fn = { NULL, td_gui_on_finished, td_gui_on_reset },
+    .user_data = ((void *)KC_LGUI),
+  },
+  [TD_ALT_OR_LOCK_WORKSTATION] = ACTION_TAP_DANCE_MULTITAP(KC_SPC, KC_LALT, KC_ENT, KC_LALT),
+  //  [TD_GUI_OR_ESC] = ACTION_TAP_DANCE_DOUBLE_RESTORE_MODS(KC_LGUI, KC_ESC)
+  [TD_GUI_OR_ESC] = ACTION_TAP_DANCE_MULTITAP(KC_ENT, KC_LGUI, KC_ENT, KC_RGUI)
+};
 
 void td_mod_tap_on_finished(qk_tap_dance_state_t *state, void *user_data) {
     qk_tap_dance_pair_t *pair = (qk_tap_dance_pair_t *)user_data;

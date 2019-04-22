@@ -1,5 +1,18 @@
-#ifndef TAP_DANCE_EXTRA_H
-#define TAP_DANCE_EXTRA_H
+#pragma once
+#include "pm.h"
+
+#ifdef TAP_DANCE_ENABLE
+enum {
+  TD_TASKSWITCH = 0,
+  TD_LEFT_BRACE_OR_PRN,
+  TD_RIGHT_BRACE_OR_PRN,
+  TD_SEMICOLON_OR_COLON,
+  TD_ALT_OR_LOCK_WORKSTATION,
+  TD_GUI_OR_ESC,
+  TD_GUI_OR_LOCK_WORKSTATION
+};
+#endif // TAP_DANCE_ENABLE
+
 
 #include "process_keycode/process_tap_dance.h"
 
@@ -13,7 +26,7 @@ typedef struct
   uint16_t kc4;
 } qk_tap_dance_quad_t;
 
-// kc1 is a mods and kc2 is a keycode
+// kc1 is a mod and kc2 is a keycode
 // ACTION_TAP_DANCE_MOD_TAP(MOD_LALT, KC_LBRC)
 #define ACTION_TAP_DANCE_MOD_TAP(kc1, kc2) {                            \
     .fn = { NULL, td_mod_tap_on_finished, td_mod_tap_on_reset },        \
@@ -68,5 +81,3 @@ void td_pair_restore_mods_reset(qk_tap_dance_state_t *state, void *user_data);
 
 void td_quad_finished (qk_tap_dance_state_t *state, void *user_data);
 void td_quad_reset (qk_tap_dance_state_t *state, void *user_data);
-
-#endif
