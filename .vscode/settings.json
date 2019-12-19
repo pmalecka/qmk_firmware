@@ -17,6 +17,13 @@
     // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
     "editor.tabSize": 2,
     // The path of the shell that the terminal uses on Windows. When using shells shipped with Windows (cmd, PowerShell or Bash on Ubuntu).
-    "terminal.integrated.shell.windows": "C:\\Windows\\sysnative\\bash.exe",
-    "terminal.integrated.shellArgs.windows": []
+    "terminal.integrated.shell.windows": "%LOCALAPPDATA%\\Programs\\msys64\\usr\\bin\\bash.exe",
+     "terminal.integrated.env.windows": {
+         "MSYSTEM": "MINGW64",
+         "CHERE_INVOKING": "1"
+     },
+     "terminal.integrated.shellArgs.windows": [
+         "--login"
+     ],
+     "terminal.integrated.cursorStyle": "line"
 }
