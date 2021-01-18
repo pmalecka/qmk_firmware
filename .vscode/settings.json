@@ -5,21 +5,23 @@
     // Configure glob patterns for excluding files and folders.
     "files.exclude": {
         "**/.build": true,
-        "**/*.hex": true
+        "**/*.hex": true,
+        "**/*.bin": true
     },
     "files.associations": {
-        "*.h": "c",
       "*.c": "c",
+      "*.inc": "c",
       "*.cpp": "cpp",
       "*.hpp": "cpp",
       "xstddef": "c",
       "type_traits": "c",
-      "utility": "c"
+      "utility": "c",
+      "ranges": "c"
     },
     // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
     "editor.tabSize": 2,
     // The path of the shell that the terminal uses on Windows. When using shells shipped with Windows (cmd, PowerShell or Bash on Ubuntu).
-    "terminal.integrated.shell.windows": "C:\\users\\rafo\\AppData\\Local\\Programs\\msys64\\usr\\bin\\bash.exe",
+    "terminal.integrated.shell.windows": "%LOCALAPPDATA%\\Programs\\msys64\\usr\\bin\\bash.exe",
     "terminal.integrated.env.windows": {
       "MSYSTEM": "MINGW64",
       "CHERE_INVOKING": "1"
@@ -27,5 +29,9 @@
     "terminal.integrated.shellArgs.windows": [
       "--login"
     ],
-    "terminal.integrated.cursorStyle": "line"
+    "terminal.integrated.cursorStyle": "line",
+    "[markdown]": {
+        "editor.trimAutoWhitespace": false,
+        "files.trimTrailingWhitespace": false
+    }
 }
